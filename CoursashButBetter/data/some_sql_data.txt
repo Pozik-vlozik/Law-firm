@@ -1,0 +1,69 @@
+INSERT INTO clients (name, surname, patronymic, passport_number) VALUES("Филипп", "Филипович", "Филипов", "sdflksf"), ("Аркадий", "Аркадиевич", "Аркадьев", "sjsogsjgposj"), ("Игнат", "Игнатьевич", "Игнатьев", "sodfjsopfj"), ("Черт", "Чертов", "Чертанов", "sldfjksofj");
+
+
+INSERT INTO lawyers (name, surname, patronymic, cases_won, cases_lost) VALUES("Адвокат", "Адвокатьевич", "Адвокатов", 0, 0), ("Бюрокрад", "Бюрократович", "Бюрократов", 0, 0), ("Жук", "Жуковский", "Жукович", 0, 0);
+
+INSERT INTO cases (client_id, case_start_date, case_end_date, case_won, nom_price, description) VALUES (1, '14-02-2022', NULL, NULL, 1000, 'Статья 2, Статья 5'), (2, '12-02-2022', NULL, NULL, 1000, 'Статья 228'), (3, '10-02-2022', NULL, NULL, 1000, 'Статья 337');
+
+INSERT INTO lawyers_list (case_id, lawyer_id) VALUES (1, 3), (1, 2), (2, 2), (2, 2), (3, 1), (3, 1);
+
+INSERT INTO procedures_list (procedure_id, case_id) VALUES (1, 1), (2, 1), (4, 1);
+
+INSERT INTO legal_procedures (procedure_name, procedure_cost) VALUES ("Подготовка исковых заявлений, ходатайств, жалоб, обращений, запросов, требований и других юридических документов", 100), ("Представление интересов граждан в судах при разбирательствах административных, гражданских и уголовных дел", 150), ("Защита законных прав и интересов клиентов в третейских арбитражных судах", 200), ("Участие в судебных процессах, подготовка документов, сбор и представление доказательств, которые могут повлиять на исход дела", 250), ("Получение судебных решений и представление интересов клиента при исполнении судебных решений", 300), ("Защита законных интересов и прав физических и юридических лиц в налоговых органах", 300);
+
+
+
+
+Процедуры, не используемые пользователем
+SELECT
+	c.case_id,
+	lp.procedure_id,
+	lp.procedure_name,
+	lp.procedure_cost
+FROM cases c
+CROSS JOIN legal_procedures lp
+	WHERE case_id=2
+EXCEPT
+SELECT
+	pl.case_id,
+	pl.procedure_id,
+	lp.procedure_name,
+	lp.procedure_cost
+FROM legal_procedures lp INNER JOIN procedures_list pl
+	ON lp.procedure_id = pl.procedure_id
+	
+ПРоцедуры, используемые пользователем
+SELECT pl.case_id, lp.procedure_id, lp.procedure_name, lp.procedure_cost
+	FROM legal_procedures lp
+	JOIN procedures_list pl
+	WHERE pl.procedure_id = lp.procedure_id 
+		AND pl.case_id = 1
+
+
+
+
+
+
+SELECT 
+	c.case_id,
+	l.lawyer_id,
+	l.name,
+	l.surname,
+	l.patronymic,
+	l.cases_lost,
+	l.cases_won
+FROM cases c
+	CROSS JOIN lawyers l
+WHERE c.case_id = 1
+EXCEPT 
+SELECT 
+	ll.case_id,
+	ll.lawyer_id,
+	l.name,
+	l.surname,
+	l.patronymic,
+	l.cases_lost,
+	l.cases_won
+FROM lawyers l
+	INNER JOIN lawyers_list ll 
+	ON l.lawyer_id = ll.lawyer_id

@@ -1,0 +1,14 @@
+SELECT 
+	c.case_id, 
+	cl.name as 'Cl_name', 
+	cl.surname as 'Cl_surname', 
+	cl.patronymic as 'Cl_patronymic',
+	l.name as 'l_name',
+	l.surname as 'l_surname',
+	l.patronymic as 'l_patronymic',
+	c.case_start_date
+FROM cases c
+JOIN clients cl
+	ON c.client_id = cl.client_id
+JOIN lawyers l
+	on c.lawyer_id = l.lawyer_id
